@@ -1,17 +1,31 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-// Importing module
-const express_1 = __importDefault(require("express"));
-const app = (0, express_1.default)();
-const PORT = 3000;
-// Handling GET / Request
-app.get("/", (req, res) => {
-    res.send("Back End is Up");
-});
-// Server setup
-app.listen(PORT, () => {
-    console.log("The application is listening " + "on port http://localhost:" + PORT);
+// Package Imports
+import express from "express";
+import cors from "cors";
+import "./loadEnv.js";
+
+//File Imports
+import recordRoutes from "./routes/record.js";
+
+//Package implementation
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+//Setup Routes
+app.use("routes", recordRoutes);
+
+// Variable Imports
+const port = process.env.PORT || 5000;
+
+// Connect to DB
+import { connectToServer } from "./db/conn.js";
+
+// _________________________________ //
+
+app.listen(port, () => {
+  // perform a database connection when server starts
+  connectToServer(function (err) {
+    if (err) console.error("issue connecting to db", err);
+  });
+  console.log(`Server is running on port: ${port}`);
 });
